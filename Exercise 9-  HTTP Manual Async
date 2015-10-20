@@ -1,0 +1,21 @@
+var bl = require("bl");
+var http = require('http');
+var arr = [process.argv[2], process.argv[3], process.argv[4]];
+var obj = {};
+var counter = 0;
+
+
+arr.forEach(function(item) {
+    http.get(item, function(response) {
+        response.pipe(bl(function(err, data) {
+            if (err) return console.error(err);
+            obj[item] = data.toString();
+            counter++;
+            if (counter === 3) {
+                arr.forEach(function(item) {
+                    console.log(obj[item]);
+                });
+            }
+        }));
+    });
+});
