@@ -1,0 +1,52 @@
+var net = require("net");
+var strftime = require("strftime");
+
+var it_IT = {
+    days: ['domenica', 'lunedi',
+        'martedi', 'mercoledi',
+        'giovedi', 'venerdi',
+        'sabato'
+    ],
+    shortDays: ['dom', 'lun', 'mar',
+        'mer', 'gio', 'ven',
+        'sab'
+    ],
+    months: ['gennaio', 'febbraio',
+        'marzo', 'aprile',
+        'maggio', 'giugno',
+        'luglio', 'agosto',
+        'settembre', 'ottobre',
+        'novembre', 'dicembre'
+    ],
+    shortMonths: ['gen', 'feb',
+        'mar', 'apr', 'mag',
+        'giu', 'lug', 'ago',
+        'set', 'ott', 'nov',
+        'dic'
+    ],
+    AM: 'AM',
+    PM: 'PM',
+    am: 'am',
+    pm: 'pm',
+    formats: {
+        D: '%m/%d/%y',
+        F: '%Y-%m-%d',
+        R: '%H:%M',
+        X: '%T',
+        c: '%a %b %d %X %Y',
+        r: '%I:%M:%S %p',
+        T: '%H:%M',
+        v: '%e-%b-%Y',
+        x: '%D'
+    }
+}
+
+strftime = strftime.localize(it_IT);
+
+var server = net.createServer(function (
+    socket) {
+    var date = strftime('%F %T', new Date());
+    socket.end(date + "\n");
+});
+
+server.listen(Number(process.argv[2]));
