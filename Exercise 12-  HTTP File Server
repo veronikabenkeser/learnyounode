@@ -1,0 +1,44 @@
+var http = require('http');
+var url = require("url");
+
+function getTimeFunc(date, unix) {
+    var obj = {};
+    if (!unix) {
+        obj["hour"] = date.getHours();
+        obj["minute"] = date.getMinutes();
+        obj["second"] = date.getSeconds();
+    } else {
+        obj["unixtime"] = date.getTime();
+    }
+    return obj;
+}
+
+var server = http.createServer(function(request, response) {
+    if (request.method === "GET") {
+        var parsed = url.parse(request.url, true);
+        var result;
+        var val;
+
+        if (parsed.pathname === '/api/parsetime') {
+            val = parsed.query.iso;
+            var date = new Date(val);
+            result = getTimeFunc(date, false);
+
+        } else if (parsed.pathname === '/api/unixtime') {
+            val = parsed.query.iso;
+            result = getTimeFunc(new Date(val), true);
+        }
+    }
+
+    if (obj) {
+        response.writeHead(200, {
+            'Content-Type': 'application/json'
+        });
+        response.write(JSON.stringify(result));
+    } else {
+        response.writeHead(404);
+    }
+    response.end();
+});
+
+server.listen(process.argv[2]);
